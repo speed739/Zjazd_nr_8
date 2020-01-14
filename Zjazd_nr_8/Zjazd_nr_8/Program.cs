@@ -1,81 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Zjazd_nr_8
 {
     class Program
     {
-        class Printer
-        {
-            public event EventHandler<OutofpaperEventArgs> Out_of_paper;
-            public event EventHandler <OutofToner> Out_of_Toner;
-            int paper_count;
-
-            public Printer(int paper_count)
-            {
-                this.paper_count = paper_count;
-            }
-           
-            public void Print(int n)
-            {
-                if (paper_count == 0)
-                {
-                    Out_of_paper?.Invoke(this,
-                        new OutofpaperEventArgs(n));
-                    return;
-                }
-                else
-                {
-                    paper_count--;
-                    Console.WriteLine("{0} Pags_Printed...", n);
-                }
-            }
-
-        }
-        public class OutofpaperEventArgs : EventArgs
-        {
-            int page_number;
-            public OutofpaperEventArgs(int page_number)
-            {
-                this.page_number = page_number;
-
-            }
-
-        }
-        public class OutofToner:EventArgs
-        {
-
-            int[] tab = new int[2];
-            public OutofToner(int []tab)
-            {
-                this.tab = tab;
-            }
-
-        }
-
         static bool printerOk = true;
         static void Main(string[] args)
         {
+            var drukarka = new Printer(20);
 
-            var drukarka = new Printer(100);
             drukarka.Out_of_paper += Out_of_Paper2;
+            drukarka.Out_of_Toner += Drukarka_Out_of_Toner;
 
-            for (int i = 1; i < 250; i++)
+            for (int i = 1; i <30; i++)
             {
-
                 drukarka.Print(i);
                 if (!printerOk)
                 {
                     return;
                 }
-
             }
-
+        }
+        static void Drukarka_Out_of_Toner(object sender, OutOfInkEventArgs args)
+        {
+            Console.WriteLine("Brak Tuszu " + args.Color);
+            printerOk = false;
         }
         static void Out_of_Paper2(object sender, EventArgs args)
         {
             Console.WriteLine("Brak papieru !!!");
-            
+            printerOk = false;
         }
 
     }
